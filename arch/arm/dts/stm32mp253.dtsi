@@ -12,6 +12,8 @@
 			device_type = "cpu";
 			reg = <1>;
 			enable-method = "psci";
+			clocks = <&scmi_perf 0>;
+			clock-names = "cpu";
 		};
 	};
 
@@ -19,5 +21,10 @@
 		interrupts = <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>,
 			     <GIC_SPI 369 IRQ_TYPE_LEVEL_HIGH>;
 		interrupt-affinity = <&cpu0>, <&cpu1>;
+	};
+
+	soc@0 {
+		rifsc: rifsc@42080000 {
+		};
 	};
 };

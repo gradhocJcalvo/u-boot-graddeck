@@ -1311,6 +1311,7 @@ dtb-$(CONFIG_STM32MP15X) += \
 	stm32mp15xx-dhcor-testbench.dtb
 
 dtb-$(CONFIG_STM32MP25X) += \
+	stm32mp257f-dk.dtb \
 	stm32mp257f-ev1.dtb
 
 dtb-$(CONFIG_SOC_K3_AM654) += \

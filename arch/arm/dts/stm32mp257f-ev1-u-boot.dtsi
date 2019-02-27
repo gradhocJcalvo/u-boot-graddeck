@@ -5,6 +5,12 @@
 
 #include "stm32mp25-u-boot.dtsi"
 
+/ {
+	config {
+		u-boot,mmc-env-partition = "u-boot-env";
+	};
+};
+
 &usart2 {
 	bootph-all;
 };
