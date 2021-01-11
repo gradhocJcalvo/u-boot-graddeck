@@ -1277,6 +1277,14 @@
 			};
 		};
 
+		hdp: hdp@5002a000 {
+			compatible = "st,stm32mp1-hdp";
+			reg = <0x5002a000 0x400>;
+			clocks = <&rcc HDP>;
+			clock-names = "hdp";
+			status = "disabled";
+		};
+
 		rng: rng@54004000 {
 			compatible = "st,stm32mp13-rng";
 			reg = <0x54004000 0x400>;
