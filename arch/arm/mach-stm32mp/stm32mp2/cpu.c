@@ -79,11 +79,6 @@ int print_cpuinfo(void)
 	return 0;
 }
 
-int arch_misc_init(void)
-{
-	return 0;
-}
-
 /*
  * Force data-section, as .bss will not be valid
  * when save_boot_params is invoked.
@@ -105,4 +100,24 @@ void save_boot_params(unsigned long r0, unsigned long r1, unsigned long r2,
 	nt_fw_dtb = r2;
 
 	save_boot_params_ret();
+}
+
+u32 get_bootmode(void)
+{
+	/* read bootmode from TAMP backup register */
+	return (readl(TAMP_BOOT_CONTEXT) & TAMP_BOOT_MODE_MASK) >>
+		    TAMP_BOOT_MODE_SHIFT;
+
+}
+
+static void setup_boot_mode(void)
+{
+	env_set("boot_device", "mmc");
+	env_set("boot_instance", "0");
+}
+
+int arch_misc_init(void)
+{
+	setup_boot_mode();
+	return 0;
 }
