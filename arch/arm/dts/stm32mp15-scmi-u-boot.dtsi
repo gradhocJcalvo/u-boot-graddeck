@@ -25,6 +25,12 @@
 		multiple-images;
 	};
 
+	firmware {
+		optee {
+			bootph-all;
+		};
+	};
+
 	soc {
 		bootph-all;
 
