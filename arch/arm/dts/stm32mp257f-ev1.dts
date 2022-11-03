@@ -42,14 +42,6 @@
 			no-map;
 		};
 	};
-	
-	vdd_sdcard: vdd-sdcard {
-		compatible = "regulator-fixed";
-		regulator-name = "vdd_sdcard";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		regulator-always-on;
-	};
 };
 
 &arm_wdt {
@@ -85,7 +77,8 @@
 	disable-wp;
 	st,neg-edge;
 	bus-width = <4>;
-	vmmc-supply = <&vdd_sdcard>;
+	vmmc-supply = <&scmi_vdd_sdcard>;
+	vqmmc-supply = <&scmi_vddio1>;
 	status = "okay";
 };
 
