@@ -66,6 +66,14 @@
 			default-state = "off";
 		};
 	};
+
+	v3v3_ao: v3v3-ao {
+		compatible = "regulator-fixed";
+		regulator-name = "v3v3_ao";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+	};
 };
 
 &adc_1 {
@@ -165,6 +173,18 @@
 };
 
 &scmi_regu {
+	scmi_vddcpu: voltd-vddcpu {
+		reg = <VOLTD_SCMI_STPMIC1_BUCK1>;
+		regulator-name = "vddcpu";
+	};
+	scmi_vdd: voltd-vdd {
+		reg = <VOLTD_SCMI_STPMIC1_BUCK3>;
+		regulator-name = "vdd";
+	};
+	scmi_vddcore: voltd-vddcore {
+		reg = <VOLTD_SCMI_STPMIC1_BUCK4>;
+		regulator-name = "vddcore";
+	};
 	scmi_vdd_adc: regulator@10 {
 		reg = <VOLTD_SCMI_STPMIC1_LDO1>;
 		regulator-name = "vdd_adc";
