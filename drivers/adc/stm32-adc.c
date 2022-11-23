@@ -286,30 +286,6 @@ static int stm32_adc_legacy_chan_init(struct udevice *dev, unsigned int num_chan
 	return ret;
 }
 
-static int stm32_adc_chan_of_init(struct udevice *dev)
-{
-	struct adc_uclass_plat *uc_pdata = dev_get_uclass_plat(dev);
-	struct stm32_adc *adc = dev_get_priv(dev);
-	unsigned int num_channels;
-	int ret;
-
-	ret = stm32_adc_get_legacy_chan_count(dev);
-	if (ret < 0)
-		return ret;
-	num_channels = ret;
-
-	if (num_channels > adc->cfg->max_channels) {
-		dev_err(dev, "too many st,adc-channels: %d\n", num_channels);
-		return -EINVAL;
-	}
-
-	ret = stm32_adc_legacy_chan_init(dev, num_channels);
-	if (ret < 0)
-		return ret;
-
-	return ret;
-}
-
 static int stm32_adc_generic_chan_init(struct udevice *dev, unsigned int num_channels)
 {
 	struct adc_uclass_plat *uc_pdata = dev_get_uclass_plat(dev);
