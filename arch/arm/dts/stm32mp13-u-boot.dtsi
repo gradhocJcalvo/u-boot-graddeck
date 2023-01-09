@@ -88,6 +88,11 @@
 	bootph-all;
 };
 
+/* pre-reloc probe = reserve video frame buffer in video_reserve() */
+&ltdc {
+	bootph-some-ram;
+};
+
 &pinctrl {
 	bootph-all;
 };
