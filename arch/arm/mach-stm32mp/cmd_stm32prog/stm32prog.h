@@ -20,8 +20,8 @@
 #define DEFAULT_ADDRESS		0xFFFFFFFF
 
 #define CMD_SIZE		512
-/* SMC is only supported in SPMIN for STM32MP15x */
-#ifdef CONFIG_STM32MP15x
+/* SMC is only supported in SPMIN for STM32MP15X */
+#ifdef CONFIG_STM32MP15X
 #define OTP_SIZE_SMC		1024
 #else
 #define OTP_SIZE_SMC		0
