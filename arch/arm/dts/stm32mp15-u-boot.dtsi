@@ -92,6 +92,10 @@
 	};
 };
 
+&etzpc {
+	bootph-all;
+};
+
 &gpioa {
 	bootph-all;
 };
