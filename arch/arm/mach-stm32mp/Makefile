@@ -6,6 +6,7 @@
 obj-y += dram_init.o
 obj-y += syscon.o
 obj-y += bsec.o
+obj-y += etzpc.o
 
 obj-$(CONFIG_STM32MP13X) += stm32mp1/
 obj-$(CONFIG_STM32MP15X) += stm32mp1/
