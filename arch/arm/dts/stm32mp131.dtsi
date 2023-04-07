@@ -35,6 +35,12 @@
 		interrupt-parent = <&intc>;
 	};
 
+	arm_wdt: watchdog {
+		compatible = "arm,smc-wdt";
+		arm,smc-id = <0xb200005a>;
+		status = "disabled";
+	};
+
 	firmware {
 		optee: optee {
 			method = "smc";
