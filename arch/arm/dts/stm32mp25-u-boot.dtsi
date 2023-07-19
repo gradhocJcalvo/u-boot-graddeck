@@ -32,7 +32,7 @@
 		bootph-all;
 	};
 
-	soc@0 {
+	soc {
 		bootph-all;
 	};
 };
