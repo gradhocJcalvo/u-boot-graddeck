@@ -41,6 +41,12 @@
 	};
 
 	clocks {
+		clk_security: clk-security {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <64000000>;
+		};
+
 		ck_flexgen_08: ck-flexgen-08 {
 			#clock-cells = <0>;
 			compatible = "fixed-clock";
@@ -557,6 +563,16 @@
 				       <&hpdma 20 0x20 0x3021 0x0>;
 				dma-names = "rx", "tx";
 				feature-domains = <&rifsc STM32MP25_RIFSC_USART6_ID>;
+				status = "disabled";
+			};
+
+			rng: rng@42020000 {
+				compatible = "st,stm32mp25-rng";
+				reg = <0x42020000 0x400>;
+				clocks = <&clk_security>, <&rcc CK_BUS_RNG>;
+				clock-names = "rng_clk", "rng_hclk";
+				resets = <&rcc RNG_R>;
+				feature-domains = <&rifsc STM32MP25_RIFSC_RNG_ID>;
 				status = "disabled";
 			};
 
