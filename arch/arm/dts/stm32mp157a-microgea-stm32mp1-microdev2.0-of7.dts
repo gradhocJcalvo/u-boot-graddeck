@@ -85,7 +85,6 @@
 		#size-cells = <0>;
 
 		ltdc_ep0_out: endpoint@0 {
-			reg = <0>;
 			remote-endpoint = <&panel_in>;
 		};
 	};

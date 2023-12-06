@@ -4,7 +4,7 @@
  *
  */
 
-#include "armv7-m.dtsi"
+#include "../armv7-m.dtsi"
 #include <dt-bindings/clock/stm32fx-clock.h>
 #include <dt-bindings/mfd/stm32f7-rcc.h>
 
