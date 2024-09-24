@@ -16,6 +16,7 @@ obj-$(CONFIG_STM32MP23X) += stm32mp2/
 obj-$(CONFIG_STM32MP25X) += stm32mp2/
 
 obj-$(CONFIG_STM32MP_TAMP_NVMEM) += nvram.o
+obj-$(CONFIG_MFD_STM32_TIMERS) += timers.o
 
 obj-$(CONFIG_STM32_ECDSA_VERIFY) += ecdsa_romapi.o
 ifndef CONFIG_SPL_BUILD
