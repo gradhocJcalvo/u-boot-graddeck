@@ -279,13 +279,13 @@ static int get_misc_dev(struct udevice **dev)
 	return ret;
 }
 
-static void read_key_value(const struct stm32key *key, u32 addr)
+static void read_key_value(const struct stm32key *key, unsigned long addr)
 {
 	int i;
 
 	for (i = 0; i < key->size; i++) {
 		printf("%s OTP %i: [%08x] %08x\n", key->name, key->start + i,
-		       addr, __be32_to_cpu(*(u32 *)(long)addr));
+		       (u32)addr, __be32_to_cpu(*(u32 *)addr));
 		addr += 4;
 	}
 }
@@ -450,13 +450,14 @@ static int post_process_edmk_128b(struct udevice *dev, const struct stm32key *ke
 	return 0;
 }
 
-static int fuse_key_value(struct udevice *dev, const struct stm32key *key, u32 addr, bool print)
+static int fuse_key_value(struct udevice *dev, const struct stm32key *key, unsigned long addr,
+			  bool print)
 {
 	u32 word, val;
 	int i, ret;
 
 	for (i = 0, word = key->start; i < key->size; i++, word++, addr += 4) {
-		val = __be32_to_cpu(*(u32 *)(long)addr);
+		val = __be32_to_cpu(*(u32 *)addr);
 		if (print)
 			printf("Fuse %s OTP %i : %08x\n", key->name, word, val);
 
@@ -537,7 +538,7 @@ static int do_stm32key_read(struct cmd_tbl *cmdtp, int flag, int argc, char *con
 {
 	const struct stm32key *key;
 	struct udevice *dev;
-	u32 addr;
+	unsigned long addr;
 	int ret, i;
 	int result;
 
@@ -575,7 +576,7 @@ static int do_stm32key_read(struct cmd_tbl *cmdtp, int flag, int argc, char *con
 		return CMD_RET_USAGE;
 
 	key = get_key(stm32key_index);
-	printf("Read %s at 0x%08x\n", key->name, addr);
+	printf("Read %s at 0x%08x\n", key->name, (u32)addr);
 	read_key_value(key, addr);
 
 	return CMD_RET_SUCCESS;
@@ -585,7 +586,7 @@ static int do_stm32key_fuse(struct cmd_tbl *cmdtp, int flag, int argc, char *con
 {
 	const struct stm32key *key = get_key(stm32key_index);
 	struct udevice *dev;
-	u32 addr;
+	unsigned long addr;
 	int ret;
 	bool yes = false, lock;
 
