@@ -129,7 +129,7 @@ static int stm32mp_wdt_probe(struct udevice *dev)
 
 	if (priv->hw_version >= ONF_MIN_VER) {
 		if (readl(priv->base + IWDG_SR) & SR_ONF)
-			wdt_set_force_start(dev);
+			wdt_set_force_autostart(dev);
 	} else {
 		/*
 		 * Workaround for old versions without IWDG_SR_ONF bit:
@@ -143,7 +143,7 @@ static int stm32mp_wdt_probe(struct udevice *dev)
 		ret = readl_poll_timeout(priv->base + IWDG_SR, sr, sr & SR_RVU,
 					 TIMEOUT_US);
 		if (!ret)
-			wdt_set_force_start(dev);
+			wdt_set_force_autostart(dev);
 
 		writel(KR_KEY_DWA, priv->base + IWDG_KR);
 	}
