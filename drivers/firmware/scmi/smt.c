@@ -87,6 +87,7 @@ int scmi_write_msg_to_smt(struct udevice *dev, struct scmi_smt *smt,
 	/* Load message in shared memory */
 	hdr->channel_status &= ~SCMI_SHMEM_CHAN_STAT_CHANNEL_FREE;
 	hdr->length = msg->in_msg_sz + sizeof(hdr->msg_header);
+	hdr->flags = 0;
 	hdr->msg_header = SMT_HEADER_TOKEN(0) |
 			  SMT_HEADER_MESSAGE_TYPE(0) |
 			  SMT_HEADER_PROTOCOL_ID(msg->protocol_id) |
