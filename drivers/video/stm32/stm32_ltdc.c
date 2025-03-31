@@ -11,6 +11,9 @@
 #include <display.h>
 #include <dm.h>
 #include <log.h>
+#if CONFIG_IS_ENABLED(ARCH_STM32MP)
+#include <mach/rif.h>
+#endif /* CONFIG_IS_ENABLED(ARCH_STM32MP) */
 #include <panel.h>
 #include <regmap.h>
 #include <reset.h>
@@ -24,15 +27,13 @@
 #include <dm/pinctrl.h>
 #include <linux/bitops.h>
 
-#if CONFIG_IS_ENABLED(ARCH_STM32MP)
-/* direct access to RIFSC function, waiting firewall uclass */
-#include <mach/rif.h>
-static int stm32_check_access_by_id(ofnode device_node, u32 id)
+#if !CONFIG_IS_ENABLED(ARCH_STM32MP)
+static int stm32_rifsc_grant_access_by_id(ofnode device_node, u32 id)
 {
-	return stm32_rifsc_check_access_by_id(device_node, id);
+	return -EACCES;
 }
-#else
-static int stm32_check_access_by_id(ofnode device_node, u32 id)
+
+static int stm32_rifsc_release_access_by_id(ofnode device_node, u32 id)
 {
 	return -EACCES;
 }
@@ -823,7 +824,8 @@ static int stm32_ltdc_probe(struct udevice *dev)
 
 	if (IS_ENABLED(CONFIG_STM32MP25X) || IS_ENABLED(CONFIG_STM32MP23X) ||
 	    IS_ENABLED(CONFIG_STM32MP21X)) {
-		struct ofnode_phandle_args args;
+		struct ofnode_phandle_args args_cmn;
+		struct ofnode_phandle_args args_l1l2;
 
 		node = dev_ofnode(dev);
 
@@ -833,13 +835,13 @@ static int stm32_ltdc_probe(struct udevice *dev)
 
 		ret = ofnode_parse_phandle_with_args(node, "access-controllers",
 						     "#access-controller-cells",
-						     0, idx, &args);
+						     0, idx, &args_cmn);
 		if (ret < 0) {
 			dev_err(dev, "Can not get access-controllers to common registers\n");
 			return ret;
 		}
 
-		ret = stm32_check_access_by_id(dev_ofnode(dev), args.args[0]);
+		ret = stm32_rifsc_grant_access_by_id(dev_ofnode(dev), priv->args_cmn.args[0]);
 		if (ret < 0) {
 			dev_err(dev, "Fail to get access to common registers\n");
 			return ret;
@@ -853,14 +855,15 @@ static int stm32_ltdc_probe(struct udevice *dev)
 
 		ret = ofnode_parse_phandle_with_args(node, "access-controllers",
 						     "#access-controller-cells",
-						     0, idx, &args);
+						     0, idx, &args_l1l2);
 		if (ret < 0) {
 			dev_err(dev, "Can not get access-controllers to l1l2 registers\n");
 			return ret;
 		}
 
-		ret = stm32_check_access_by_id(dev_ofnode(dev), args.args[0]);
+		ret = stm32_rifsc_grant_access_by_id(dev_ofnode(dev), priv->args_l1l2.args[0]);
 		if (ret < 0) {
+			stm32_rifsc_release_access_by_id(dev_ofnode(dev), priv->args_cmn.args[0]);
 			dev_err(dev, "Fail to get access to l1l2 registers\n");
 			return ret;
 		}
@@ -1085,6 +1088,19 @@ static int stm32_ltdc_bind(struct udevice *dev)
 	uc_plat->align = SZ_2M;
 	dev_dbg(dev, "frame buffer max size %d bytes align %x\n",
 		uc_plat->size, uc_plat->align);
+
+	return 0;
+}
+
+static int stm32_ltdc_remove(struct udevice *dev)
+{
+	if (IS_ENABLED(CONFIG_STM32MP25X) || IS_ENABLED(CONFIG_STM32MP23X) ||
+	    IS_ENABLED(CONFIG_STM32MP21X)) {
+		struct stm32_ltdc_priv *priv = dev_get_priv(dev);
+
+		stm32_rifsc_release_access_by_id(dev_ofnode(dev), priv->args_cmn.args[0]);
+		stm32_rifsc_release_access_by_id(dev_ofnode(dev), priv->args_l1l2.args[0]);
+	}
 
 	return 0;
 }

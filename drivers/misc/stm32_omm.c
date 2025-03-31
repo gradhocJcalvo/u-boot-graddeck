@@ -198,7 +198,7 @@ static int stm32_omm_probe(struct udevice *dev) {
 		if (!ofnode_device_is_compatible(child, "st,stm32mp25-omi"))
 			return -EINVAL;
 
-		ret = stm32_rifsc_check_access(child);
+		ret = stm32_rifsc_grant_access(child);
 		if (ret < 0 && ret != -EACCES)
 			return ret;
 
@@ -216,7 +216,7 @@ static int stm32_omm_probe(struct udevice *dev) {
 		return -EINVAL;
 
 	/* check if OMM's ressource access is granted */
-	ret = stm32_rifsc_check_access(dev_ofnode(dev));
+	ret = stm32_rifsc_grant_access(dev_ofnode(dev));
 	if (ret < 0 && ret != -EACCES)
 		goto end;
 
@@ -405,7 +405,7 @@ static int stm32_omm_bind(struct udevice *dev)
 	     node = ofnode_next_subnode(node)) {
 		const char *node_name = ofnode_get_name(node);
 
-		if (!ofnode_is_enabled(node) || stm32_rifsc_check_access(node)) {
+		if (!ofnode_is_enabled(node) || stm32_rifsc_grant_access(node)) {
 			dev_dbg(dev, "%s failed to bind\n", node_name);
 			continue;
 		}
