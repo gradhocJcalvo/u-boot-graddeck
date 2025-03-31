@@ -167,6 +167,14 @@ static int stm32_omm_enable_child_clock(struct udevice *dev, ofnode child)
 	return ret;
 }
 
+static void stm32_omm_release_childs(ofnode *child_list, u8 nb_child)
+{
+	u8 i;
+
+	for (i = 0; i < nb_child; i++)
+		stm32_rifsc_release_access(child_list[i]);
+}
+
 static int stm32_omm_probe(struct udevice *dev) {
 	struct stm32_omm_plat *plat = dev_get_plat(dev);
 	ofnode child_list[OMM_CHILD_NB];
@@ -210,7 +218,7 @@ static int stm32_omm_probe(struct udevice *dev) {
 	/* check if OMM's ressource access is granted */
 	ret = stm32_rifsc_check_access(dev_ofnode(dev));
 	if (ret < 0 && ret != -EACCES)
-		return ret;
+		goto end;
 
 	/* All child's access are granted ? */
 	if (!ret && child_access_granted == nb_child) {
@@ -218,12 +226,12 @@ static int stm32_omm_probe(struct udevice *dev) {
 		for (i = 0; i < nb_child; i++) {
 			ret = stm32_omm_disable_child(dev, child_list[i]);
 			if (ret)
-				return ret;
+				goto end;
 		}
 
 		ret = stm32_omm_configure(dev);
 		if (ret)
-			return ret;
+			goto end;
 
 		if (plat->mux & CR_MUXEN) {
 			/*
@@ -234,7 +242,7 @@ static int stm32_omm_probe(struct udevice *dev) {
 			for (i = 0; i < nb_child; i++) {
 				ret = stm32_omm_enable_child_clock(dev, child_list[i]);
 				if (ret)
-					return ret;
+					goto end;
 			}
 		}
 	} else {
@@ -245,6 +253,10 @@ static int stm32_omm_probe(struct udevice *dev) {
 		 */
 		ret = stm32_omm_set_amcr(dev, false);
 	}
+
+end:
+	stm32_omm_release_childs(child_list, nb_child);
+	stm32_rifsc_release_access(dev_ofnode(dev));
 
 	return ret;
 }
