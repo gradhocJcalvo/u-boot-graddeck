@@ -51,6 +51,8 @@ struct stm32_ltdc_priv {
 	u32 hw_version;
 	struct udevice *bridge;
 	struct udevice *panel;
+	struct ofnode_phandle_args args_cmn;
+	struct ofnode_phandle_args args_l1l2;
 };
 
 /* Layer register offsets */
@@ -824,9 +826,6 @@ static int stm32_ltdc_probe(struct udevice *dev)
 
 	if (IS_ENABLED(CONFIG_STM32MP25X) || IS_ENABLED(CONFIG_STM32MP23X) ||
 	    IS_ENABLED(CONFIG_STM32MP21X)) {
-		struct ofnode_phandle_args args_cmn;
-		struct ofnode_phandle_args args_l1l2;
-
 		node = dev_ofnode(dev);
 
 		idx = ofnode_stringlist_search(node, "access-controller-names", "cmn");
@@ -835,7 +834,7 @@ static int stm32_ltdc_probe(struct udevice *dev)
 
 		ret = ofnode_parse_phandle_with_args(node, "access-controllers",
 						     "#access-controller-cells",
-						     0, idx, &args_cmn);
+						     0, idx, &priv->args_cmn);
 		if (ret < 0) {
 			dev_err(dev, "Can not get access-controllers to common registers\n");
 			return ret;
@@ -855,7 +854,7 @@ static int stm32_ltdc_probe(struct udevice *dev)
 
 		ret = ofnode_parse_phandle_with_args(node, "access-controllers",
 						     "#access-controller-cells",
-						     0, idx, &args_l1l2);
+						     0, idx, &priv->args_l1l2);
 		if (ret < 0) {
 			dev_err(dev, "Can not get access-controllers to l1l2 registers\n");
 			return ret;
@@ -1118,5 +1117,7 @@ U_BOOT_DRIVER(stm32_ltdc) = {
 	.of_match		= stm32_ltdc_ids,
 	.probe			= stm32_ltdc_probe,
 	.bind			= stm32_ltdc_bind,
-	.priv_auto	= sizeof(struct stm32_ltdc_priv),
+	.priv_auto		= sizeof(struct stm32_ltdc_priv),
+	.flags			= DM_FLAG_OS_PREPARE,
+	.remove			= stm32_ltdc_remove,
 };
