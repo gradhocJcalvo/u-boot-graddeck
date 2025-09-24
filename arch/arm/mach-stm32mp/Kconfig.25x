@@ -31,7 +31,7 @@ if DEBUG_UART
 
 # debug on USART2 by default
 config DEBUG_UART_BASE
-	default 0x400e0000
+	default 0x40110000
 
 config DEBUG_UART_CLOCK
 	default 0
