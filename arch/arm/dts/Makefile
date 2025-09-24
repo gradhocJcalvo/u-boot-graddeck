@@ -1317,7 +1317,7 @@ dtb-$(CONFIG_STM32MP23X) += \
 	stm32mp235f-dk.dtb
 
 dtb-$(CONFIG_STM32MP25X) += \
-	stm32mp257f-dk.dtb 
+	stm32mp257f-ev1.dtb 
 
 dtb-$(CONFIG_SOC_K3_AM654) += \
 	k3-am654-base-board.dtb \
